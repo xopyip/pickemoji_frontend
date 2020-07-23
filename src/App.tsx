@@ -17,7 +17,7 @@ import Profile from "./pages/Profile";
 
 const StyledApp = styled.div`
   display: grid;
-  grid-template-columns: 2fr 5fr 3fr;
+  grid-template-columns: 2fr 4fr 3fr;
   height: 100%;
 `;
 

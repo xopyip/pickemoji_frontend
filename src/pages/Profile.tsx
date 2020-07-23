@@ -8,6 +8,8 @@ import defaultAvatar from "../assets/user.png";
 import heartIcon from "../assets/heart.png";
 import checkIcon from "../assets/check.png";
 import quizzesIcon from "../assets/quizzes.png";
+import timeIcon from "../assets/time.png";
+import QuizListEntry from "../components/QuizListEntry";
 
 
 const GET_USER = gql`
@@ -16,6 +18,26 @@ const GET_USER = gql`
             _id
             username
             about
+            quizzes{
+                _id
+                name
+                desc
+                likes
+                doneCounter
+                author{
+                    username
+                }
+                category{
+                    name
+                    icon
+                }
+                emojis{
+                    emoji
+                    desc
+                }
+                accepted
+                createdAt
+            }
         }
     }
 `;
@@ -25,6 +47,26 @@ const GET_SELF = gql`
             _id
             username
             about
+            quizzes{
+                _id
+                name
+                desc
+                likes
+                doneCounter
+                author{
+                    username
+                }
+                category{
+                    name
+                    icon
+                }
+                emojis{
+                    emoji
+                    desc
+                }
+                accepted
+                createdAt
+            }
         }
     }
 `;
@@ -72,17 +114,47 @@ const Stats = styled.div`
     margin-right: 30px;
   }
 `
+const Quizzes = styled.div`
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  h2{
+    grid-column: 1/3;
+    text-align: center;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: lighter;
+    margin: 0;
+  }
+`
+const Badge = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #078373;
+  border-radius: 8px;
+  width: 50%;
+  margin: 30px auto 0;
+  height: 40px;
+  padding: 0 10px;
+  line-height: 40px;
+  color: white;
+  img{
+    height: 30px;
+    
+  }
+`
 
-function Profile({token, username} : any) {
+function Profile({token, username}: any) {
   let {loading, error, data} = useQuery(username ? GET_USER : GET_SELF, {
     variables: {
       username
     }
   })
-  if(loading){
+  if (loading) {
     return <div>Loading...</div>
   }
-  if(error){
+  if (error) {
     return <div>Error :( </div>
   }
   data = username ? data.user : data.me;
@@ -98,20 +170,41 @@ function Profile({token, username} : any) {
       </About>
       <Stats>
         <img src={heartIcon} alt={"hearts"}/>
-        <span>123</span>
+        <span>{data.quizzes.reduce((d : number, el : {likes: number}) => d + el.likes, 0)}</span>
         <img src={checkIcon} alt={"done"}/>
-        <span>123</span>
+        <span>{data.quizzes.reduce((d : number, el : {doneCounter: number}) => d + el.doneCounter, 0)}</span>
         <img src={quizzesIcon} alt={"quizzes"}/>
-        <span>123</span>
+        <span>{data.quizzes.length}</span>
       </Stats>
+      <Quizzes>
+        <h2>{data.username}'s Quizzes</h2>
+        <div>
+          <Badge>
+            Most popular
+            <img src={heartIcon} alt={"heart"}/>
+          </Badge>
+          {[...data.quizzes].sort((a : any, b : any) => b.likes - a.likes).slice(0, 10).map((quiz : any) => (
+            <QuizListEntry quiz={quiz}/>
+          ))}
+        </div>
+        <div>
+          <Badge>
+            Recent
+            <img src={timeIcon} alt={"heart"}/>
+          </Badge>
+          {[...data.quizzes].sort((a : any, b : any) => b.createdAt - a.createdAt).slice(0, 10).map((quiz : any) => (
+            <QuizListEntry quiz={quiz}/>
+          ))}
+        </div>
+      </Quizzes>
     </div>
   )
 }
-const mapStateToProps = (state : RootType) => ({
+
+const mapStateToProps = (state: RootType) => ({
   token: state.auth.token
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

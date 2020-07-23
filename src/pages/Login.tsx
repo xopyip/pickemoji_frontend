@@ -2,10 +2,11 @@ import React, {ChangeEvent, FormEvent, MouseEvent, useCallback, useState} from '
 import loginImg from "../assets/login_bg.png";
 import styled from "styled-components";
 
-import {connect} from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import {RootType} from "../reducers";
 import {gql, useMutation} from "@apollo/client";
 import {setToken} from "../reducers/auth";
+import { useHistory } from 'react-router-dom';
 
 
 const StyledLoginPage = styled.div`
@@ -95,6 +96,8 @@ const REGISTER_MUTATION = gql`
 `
 
 function LoginPage() {
+  let history = useHistory();
+  let dispatch = useDispatch();
   let [error, setError] = useState("");
   let [login, setLogin] = useState("");
   let [password, setPassword] = useState("");
@@ -106,23 +109,25 @@ function LoginPage() {
 
   let onSubmit = useCallback((e: FormEvent) => {
     loginMutation({ variables: { username: login, password } }).then(result => {
-      setToken(result.data.login.token);
+      dispatch(setToken(result.data.login.token));
+      history.push("/");
     }).catch(error => {
       setError(error.message);
     })
     e.preventDefault();
     return false;
-  }, [loginMutation, setError, login, password]);
+  }, [dispatch,history, loginMutation, setError, login, password]);
 
   let onRegister = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     registerMutation({ variables: { username: login, password } }).then(result => {
-      setToken(result.data.register.token);
+      dispatch(setToken(result.data.register.token));
+      history.push("/");
     }).catch(error => {
       setError(error.message);
     })
     e.preventDefault();
     return false;
-  }, [registerMutation, setError, login, password]);
+  }, [dispatch,history, registerMutation, setError, login, password]);
 
   return (
     <StyledLoginPage>

@@ -5,11 +5,14 @@ import styled from 'styled-components'
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
 
 import Tops from "./components/Tops";
 import LoginPage from "./pages/Login";
+import {connect} from "react-redux";
+import {RootType} from "./reducers";
 
 const StyledApp = styled.div`
   display: grid;
@@ -23,14 +26,18 @@ const Main = styled.main`
   padding: 50px;
 `
 
-function App() {
+function App({isLogged} : any) {
   return (
     <Router>
       <StyledApp>
         <Navigation/>
         <Main>
           <Switch>
-            <Route path={"/"} exact component={LoginPage}/>
+            <Route path={"/"} exact>
+              {!isLogged && <Redirect to={"/login"} />}
+              home
+            </Route>
+            <Route path={"/login"} component={LoginPage}/>
           </Switch>
         </Main>
         <Tops/>
@@ -39,4 +46,11 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state : RootType) => ({
+  isLogged: state.auth.token && state.auth.token.length > 0
+});
+const mapDispatchToProps = {
+
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

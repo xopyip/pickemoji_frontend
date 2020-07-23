@@ -10,6 +10,10 @@ const Element = styled.div`
   padding: 10px;
   box-sizing: border-box;
   color: #ffffff;
+  &.disabled{
+    background: #656565;
+    border: 2px solid #323232;
+  }
   p{
     margin: 0;
   }
@@ -53,14 +57,14 @@ type Quiz = {
     icon: String
   },
   accepted: Boolean,
-  emojis: [{emoji: String, desc: String}],
+  emojis: [{emoji: string, desc: string}],
   createdAt: Date
 };
 
 function QuizListEntry({quiz} : any){
   let q = (quiz as Quiz);
   return (
-    <Element>
+    <Element className={q.accepted ? "" : "disabled"}>
       <div>
         <Badge>{q.category.name}</Badge>
         <SemiTransparent>Quiz by</SemiTransparent> {q.author.username}
@@ -71,7 +75,7 @@ function QuizListEntry({quiz} : any){
       </div>
       <Twemoji>
         {q.emojis.map(emoji => (
-          <>{emoji.emoji}</>
+          <span key={emoji.emoji}>{emoji.emoji}</span>
         ))}
       </Twemoji>
     </Element>

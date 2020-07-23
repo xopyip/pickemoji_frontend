@@ -1,7 +1,5 @@
 import React from 'react';
 
-import {connect} from "react-redux";
-import {RootType} from "../reducers";
 import {gql, useQuery} from "@apollo/client";
 import styled from "styled-components";
 import defaultAvatar from "../assets/user.png";
@@ -75,7 +73,7 @@ const ProfileHeading = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: end;
-  margin-top: 100px;
+  margin-top: 50px;
   h1{
     color: #ffffff;
     font-size: 45px;
@@ -145,7 +143,7 @@ const Badge = styled.div`
   }
 `
 
-function Profile({token, username}: any) {
+function Profile({username}: any) {
   let {loading, error, data} = useQuery(username ? GET_USER : GET_SELF, {
     variables: {
       username
@@ -183,17 +181,17 @@ function Profile({token, username}: any) {
             Most popular
             <img src={heartIcon} alt={"heart"}/>
           </Badge>
-          {[...data.quizzes].sort((a : any, b : any) => b.likes - a.likes).slice(0, 10).map((quiz : any) => (
-            <QuizListEntry quiz={quiz}/>
+          {[...data.quizzes].sort((a : any, b : any) => b.likes - a.likes).slice(0, 5).map((quiz : any) => (
+            <QuizListEntry key={quiz._id} quiz={quiz}/>
           ))}
         </div>
         <div>
           <Badge>
             Recent
-            <img src={timeIcon} alt={"heart"}/>
+            <img src={timeIcon} alt={"time"}/>
           </Badge>
-          {[...data.quizzes].sort((a : any, b : any) => b.createdAt - a.createdAt).slice(0, 10).map((quiz : any) => (
-            <QuizListEntry quiz={quiz}/>
+          {[...data.quizzes].sort((a : any, b : any) => b.createdAt - a.createdAt).slice(0, 5).map((quiz : any) => (
+            <QuizListEntry key={quiz._id} quiz={quiz}/>
           ))}
         </div>
       </Quizzes>
@@ -201,10 +199,5 @@ function Profile({token, username}: any) {
   )
 }
 
-const mapStateToProps = (state: RootType) => ({
-  token: state.auth.token
-});
 
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile;

@@ -1,7 +1,12 @@
-import React, {ChangeEvent, useCallback, useState} from 'react';
+import React, {ChangeEvent, FormEvent, MouseEvent, useCallback, useState} from 'react';
 import loginImg from "../assets/login_bg.png";
 import styled from "styled-components";
-import {Link} from "react-router-dom";
+
+import {connect} from "react-redux";
+import {RootType} from "../reducers";
+import {gql, useMutation} from "@apollo/client";
+import {setToken} from "../reducers/auth";
+
 
 const StyledLoginPage = styled.div`
   display: grid;
@@ -63,16 +68,68 @@ const ButtonGroup = styled.div`
   }
 `
 
+const Error = styled.div`
+  background: #EC5F5F;
+  padding: 10px;
+  box-sizing: border-box;
+  color: #ffffff;
+`
+
+const LOGIN_MUTATION = gql`
+    mutation login($username: String!, $password: String!){
+        login(username: $username, password: $password) {
+            _id
+            username
+            token
+        }
+    }
+`
+const REGISTER_MUTATION = gql`
+    mutation register($username: String!, $password: String!){
+        register(username: $username, password: $password) {
+            _id
+            username
+            token
+        }
+    }
+`
+
 function LoginPage() {
+  let [error, setError] = useState("");
   let [login, setLogin] = useState("");
   let [password, setPassword] = useState("");
   let onLoginChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setLogin(e.target.value), []);
   let onPasswordChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value), []);
+
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const [registerMutation] = useMutation(REGISTER_MUTATION);
+
+  let onSubmit = useCallback((e: FormEvent) => {
+    loginMutation({ variables: { username: login, password } }).then(result => {
+      setToken(result.data.login.token);
+    }).catch(error => {
+      setError(error.message);
+    })
+    e.preventDefault();
+    return false;
+  }, [loginMutation, setError, login, password]);
+
+  let onRegister = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    registerMutation({ variables: { username: login, password } }).then(result => {
+      setToken(result.data.register.token);
+    }).catch(error => {
+      setError(error.message);
+    })
+    e.preventDefault();
+    return false;
+  }, [registerMutation, setError, login, password]);
+
   return (
     <StyledLoginPage>
       <div>
         <img src={loginImg} alt={""}/>
-        <form autoComplete={"off"}>
+        {error && <Error>Error: {error}</Error>}
+        <form autoComplete={"off"} onSubmit={onSubmit}>
           <FormContainer>
             <input type={"text"} id={"loginInput"} autoComplete={"off"} required={true} value={login} onChange={onLoginChange}/>
             <label htmlFor={"loginInput"}>Login:</label>
@@ -83,7 +140,7 @@ function LoginPage() {
           </FormContainer>
           <ButtonGroup>
             <button>Login</button>
-            <button>Register</button>
+            <button onClick={onRegister}>Register</button>
           </ButtonGroup>
 
         </form>
@@ -91,5 +148,10 @@ function LoginPage() {
     </StyledLoginPage>
   )
 }
+const mapStateToProps = (state : RootType) => ({});
 
-export default LoginPage;
+const mapDispatchToProps = {
+  setToken
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

@@ -17,6 +17,8 @@ import Profile from "./pages/Profile";
 import Categories from "./pages/Categories";
 import Category from "./pages/Category";
 import Quiz from "./pages/Quiz";
+import QuizRequest from "./pages/QuizRequest";
+import QuizRequestResult from "./pages/QuizRequestResult";
 
 const StyledApp = styled.div`
   display: grid;
@@ -45,6 +47,8 @@ function App({isLogged} : any) {
             <Route path={"/categories"} component={Categories}/>
             <Route path={"/category/:name"} component={Category}/>
             <Route path={"/quiz/:id"} component={Quiz}/>
+            <Route path={"/r/:id"} component={QuizRequest}/>
+            <Route path={"/result/:id"} component={QuizRequestResult}/>
           </Switch>
         </Main>
         <Tops/>

@@ -110,7 +110,7 @@ function LoginPage() {
   let onSubmit = useCallback((e: FormEvent) => {
     loginMutation({ variables: { username: login, password } }).then(result => {
       dispatch(setToken(result.data.login.token));
-      history.push("/");
+      history.goBack();
     }).catch(error => {
       setError(error.message);
     })

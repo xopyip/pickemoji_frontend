@@ -37,6 +37,11 @@ const GET_CATEGORY = gql`
 const StyledCategories = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  &>span{
+    grid-column: 1/3;
+    text-align: center;
+    color: #ffffff;
+  }
   &>h1{
     grid-column: 1/3;
     text-align: center;
@@ -44,16 +49,6 @@ const StyledCategories = styled.div`
     color: #ffffff;
     margin: 20px 0 60px 0;
     text-decoration: none;
-  }
-  a > div > div{
-    text-align: right;
-    //float:right;
-    margin-top:-30px
-  }
-  a > div :after{
-    display: table-cell;
-    content: ' ';
-    clear: both;
   }
 `
 
@@ -75,6 +70,7 @@ function Category({match} : any) {
   return (
     <StyledCategories>
       <h1>Category: {data.category.name}</h1>
+      {data.category.quizzes.length === 0 && <span>There aren't any quizzes yet</span>}
       {data.category.quizzes.map((quiz: any) => <QuizListEntry key={quiz._id} quiz={quiz}/>)}
     </StyledCategories>
   )

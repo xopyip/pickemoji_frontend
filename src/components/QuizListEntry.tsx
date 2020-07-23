@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Twemoji from "react-twemoji";
+import {Link} from "react-router-dom";
 
 const Element = styled.div`
   margin: 5px;
@@ -45,6 +46,7 @@ const SemiTransparent = styled.span`
 `
 
 type Quiz = {
+  _id: String,
   name: String,
   desc: String,
   likes: Number,
@@ -65,21 +67,23 @@ function QuizListEntry({quiz} : any){
   let q = (quiz as Quiz);
   if(!q) return null;
   return (
-    <Element className={q.accepted ? "" : "disabled"}>
-      <div>
-        <Badge>{q.category.name}</Badge>
-        <SemiTransparent>Quiz by</SemiTransparent> {q.author.username}
+    <Link to={"/quiz/" + q._id}>
+      <Element className={q.accepted ? "" : "disabled"}>
         <div>
-          <p>Name: {q.name}</p>
-          <p>Desc: {q.desc}</p>
+          <Badge>{q.category.name}</Badge>
+          <SemiTransparent>Quiz by</SemiTransparent> {q.author.username}
+          <div>
+            <p>Name: {q.name}</p>
+            <p>Desc: {q.desc}</p>
+          </div>
         </div>
-      </div>
-      <Twemoji>
-        {q.emojis.map(emoji => (
-          <span key={emoji.emoji}>{emoji.emoji}</span>
-        ))}
-      </Twemoji>
-    </Element>
+        <Twemoji>
+          {q.emojis.map(emoji => (
+            <span key={emoji.emoji}>{emoji.emoji}</span>
+          ))}
+        </Twemoji>
+      </Element>
+    </Link>
   )
 }
 

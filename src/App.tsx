@@ -14,6 +14,7 @@ import LoginPage from "./pages/Login";
 import {connect} from "react-redux";
 import {RootType} from "./reducers";
 import Profile from "./pages/Profile";
+import Categories from "./pages/Categories";
 
 const StyledApp = styled.div`
   display: grid;
@@ -39,6 +40,7 @@ function App({isLogged} : any) {
               <Profile/>
             </Route>
             <Route path={"/login"} component={LoginPage}/>
+            <Route path={"/categories"} component={Categories}/>
           </Switch>
         </Main>
         <Tops/>

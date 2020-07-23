@@ -63,6 +63,7 @@ type Quiz = {
 
 function QuizListEntry({quiz} : any){
   let q = (quiz as Quiz);
+  if(!q) return null;
   return (
     <Element className={q.accepted ? "" : "disabled"}>
       <div>

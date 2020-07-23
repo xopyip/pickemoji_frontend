@@ -18,17 +18,19 @@ const StyledCategories = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   &>h1{
-  grid-column: 1/3;
-  text-align: center;
-  font-weight: lighter;
-  color: #ffffff;
-  margin: 20px 0 60px 0;
+    grid-column: 1/3;
+    text-align: center;
+    font-weight: lighter;
+    color: #ffffff;
+    margin: 20px 0 60px 0;
+    text-decoration: none;
   }
-  div{
-    float:right;
+  a > div > div{
+    text-align: right;
+    //float:right;
     margin-top:-30px
   }
-  &:after{
+  a > div :after{
     display: table-cell;
     content: ' ';
     clear: both;
@@ -47,7 +49,7 @@ function Categories() {
   return (
     <StyledCategories>
       <h1>Categories:</h1>
-      {data.categories.map((category : any) => <CategoryListEntry key={category.name} category={category}/>)}
+      {data.categories.map((category: any) => <CategoryListEntry key={category.name} category={category}/>)}
     </StyledCategories>
   )
 }

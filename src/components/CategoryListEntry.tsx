@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Twemoji from "react-twemoji";
+import {Link} from "react-router-dom";
 
 const Element = styled.div`
   margin: 5px;
@@ -15,12 +16,14 @@ const Element = styled.div`
 function CategoryListEntry({category} : any){
 
   return (
-    <Element>
-      <h1>{category.name}</h1>
-      <Twemoji>
-        {category.icon}
-      </Twemoji>
-    </Element>
+    <Link to={"/category/" + category.name}>
+      <Element>
+        <h1>{category.name}</h1>
+        <Twemoji>
+          {category.icon}
+        </Twemoji>
+      </Element>
+    </Link>
   )
 }
 

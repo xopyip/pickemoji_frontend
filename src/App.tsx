@@ -16,6 +16,7 @@ import {RootType} from "./reducers";
 import Profile from "./pages/Profile";
 import Categories from "./pages/Categories";
 import Category from "./pages/Category";
+import Quiz from "./pages/Quiz";
 
 const StyledApp = styled.div`
   display: grid;
@@ -43,6 +44,7 @@ function App({isLogged} : any) {
             <Route path={"/login"} component={LoginPage}/>
             <Route path={"/categories"} component={Categories}/>
             <Route path={"/category/:name"} component={Category}/>
+            <Route path={"/quiz/:id"} component={Quiz}/>
           </Switch>
         </Main>
         <Tops/>

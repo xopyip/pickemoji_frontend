@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
+import {ApolloClient, InMemoryCache, ApolloProvider, createHttpLink} from '@apollo/client';
 
 import {Provider} from 'react-redux'
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
@@ -13,6 +13,7 @@ import rootReducer from './reducers'
 import {persistStore, persistReducer} from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import {PersistGate} from 'redux-persist/integration/react'
+import {setContext} from "@apollo/client/link/context";
 
 const persistConfig = {
   key: 'root',
@@ -22,17 +23,35 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
-  cache: new InMemoryCache()
-});
-
 const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware({
     serializableCheck: false,
   }),
 });
+
+
+const authLink = setContext((_, { headers }) => {
+  const token = store.getState().auth.token;
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? token : "",
+    }
+  }
+});
+
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000/graphql',
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
+});
+
+
 let persistor = persistStore(store)
 
 ReactDOM.render(

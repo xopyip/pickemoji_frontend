@@ -13,6 +13,7 @@ import Tops from "./components/Tops";
 import LoginPage from "./pages/Login";
 import {connect} from "react-redux";
 import {RootType} from "./reducers";
+import Profile from "./pages/Profile";
 
 const StyledApp = styled.div`
   display: grid;
@@ -35,7 +36,7 @@ function App({isLogged} : any) {
           <Switch>
             <Route path={"/"} exact>
               {!isLogged && <Redirect to={"/login"} />}
-              home
+              <Profile/>
             </Route>
             <Route path={"/login"} component={LoginPage}/>
           </Switch>

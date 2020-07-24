@@ -148,7 +148,8 @@ function Profile({username}: any) {
     variables: {
       username
     }
-  })
+  });
+
   if (loading) {
     return <div>Loading...</div>
   }

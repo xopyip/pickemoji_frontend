@@ -3,10 +3,10 @@ import Navigation from "./components/Navigation";
 import styled from 'styled-components'
 
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  useLocation
 } from "react-router-dom";
 
 import Tops from "./components/Tops";
@@ -32,18 +32,21 @@ const Main = styled.main`
   padding: 50px;
 `
 
-function App({isLogged} : any) {
+let restrictedPaths = [
+  /^\/$/,
+  /^\/r\//,
+]
+
+function App({shouldLogin} : any) {
+  let location = useLocation();
   return (
-    <Router>
       <StyledApp>
         <Navigation/>
         <Main>
           <Switch>
-            <Route path={"/"} exact>
-              {!isLogged && <Redirect to={"/login"} />}
-              <Profile/>
-            </Route>
+            {location.pathname !== "/login" && shouldLogin && restrictedPaths.find(r => r.test(location.pathname)) !== undefined && <Redirect to={"/login"} />}
             <Route path={"/login"} component={LoginPage}/>
+            <Route path={"/"} exact component={Profile}/>
             <Route path={"/categories"} component={Categories}/>
             <Route path={"/category/:name"} component={Category}/>
             <Route path={"/quiz/:id"} component={Quiz}/>
@@ -53,12 +56,11 @@ function App({isLogged} : any) {
         </Main>
         <Tops/>
       </StyledApp>
-    </Router>
   );
 }
 
 const mapStateToProps = (state : RootType) => ({
-  isLogged: state.auth.token && state.auth.token.length > 0
+  shouldLogin: !state.auth.token || state.auth.token.length === 0
 });
 const mapDispatchToProps = {
 

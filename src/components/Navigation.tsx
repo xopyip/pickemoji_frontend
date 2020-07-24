@@ -56,8 +56,8 @@ function Navigation() {
         <ul>
           <LiLink to={"/"} exact>Account</LiLink>
           <LiLink to={"/categories"}>Categories</LiLink>
-          <LiLink to={"/search"}>Search</LiLink>
-          <LiLink to={"/create"}>Create</LiLink>
+          <LiLink to={"/requests"}>My Requests</LiLink>
+          <LiLink to={"/create"}>New Quiz</LiLink>
         </ul>
       </ListHolder>
     </Nav>

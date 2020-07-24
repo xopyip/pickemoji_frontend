@@ -6,7 +6,7 @@ import {connect, useDispatch} from "react-redux";
 import {RootType} from "../reducers";
 import {gql, useMutation} from "@apollo/client";
 import {setToken} from "../reducers/auth";
-import { useHistory } from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 
 
 const StyledLoginPage = styled.div`
@@ -97,6 +97,7 @@ const REGISTER_MUTATION = gql`
 
 function LoginPage() {
   let history = useHistory();
+  let location = useLocation();
   let dispatch = useDispatch();
   let [error, setError] = useState("");
   let [login, setLogin] = useState("");
@@ -108,26 +109,30 @@ function LoginPage() {
   const [registerMutation] = useMutation(REGISTER_MUTATION);
 
   let onSubmit = useCallback((e: FormEvent) => {
-    loginMutation({ variables: { username: login, password } }).then(result => {
+    loginMutation({variables: {username: login, password}}).then(result => {
       dispatch(setToken(result.data.login.token));
-      history.goBack();
+      if (location.pathname === "/login") {
+        history.push("/")
+      }
     }).catch(error => {
       setError(error.message);
     })
     e.preventDefault();
     return false;
-  }, [dispatch,history, loginMutation, setError, login, password]);
+  }, [location.pathname, dispatch, history, loginMutation, setError, login, password]);
 
   let onRegister = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-    registerMutation({ variables: { username: login, password } }).then(result => {
+    registerMutation({variables: {username: login, password}}).then(result => {
       dispatch(setToken(result.data.register.token));
-      history.push("/");
+      if (location.pathname === "/login") {
+        history.push("/")
+      }
     }).catch(error => {
       setError(error.message);
     })
     e.preventDefault();
     return false;
-  }, [dispatch,history, registerMutation, setError, login, password]);
+  }, [location.pathname, dispatch, history, registerMutation, setError, login, password]);
 
   return (
     <StyledLoginPage>
@@ -136,11 +141,13 @@ function LoginPage() {
         {error && <Error>Error: {error}</Error>}
         <form autoComplete={"off"} onSubmit={onSubmit}>
           <FormContainer>
-            <input type={"text"} id={"loginInput"} autoComplete={"off"} required={true} value={login} onChange={onLoginChange}/>
+            <input type={"text"} id={"loginInput"} autoComplete={"off"} required={true} value={login}
+                   onChange={onLoginChange}/>
             <label htmlFor={"loginInput"}>Login:</label>
           </FormContainer>
           <FormContainer>
-            <input type={"password"} id={"passwordInput"} autoComplete="new-password" required={true} value={password} onChange={onPasswordChange}/>
+            <input type={"password"} id={"passwordInput"} autoComplete="new-password" required={true} value={password}
+                   onChange={onPasswordChange}/>
             <label htmlFor={"passwordInput"}>Password:</label>
           </FormContainer>
           <ButtonGroup>
@@ -153,7 +160,8 @@ function LoginPage() {
     </StyledLoginPage>
   )
 }
-const mapStateToProps = (state : RootType) => ({});
+
+const mapStateToProps = (state: RootType) => ({});
 
 const mapDispatchToProps = {
   setToken

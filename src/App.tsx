@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import {
   Switch,
   Route,
-  Redirect,
   useLocation
 } from "react-router-dom";
 
@@ -44,7 +43,7 @@ function App({shouldLogin} : any) {
         <Navigation/>
         <Main>
           <Switch>
-            {location.pathname !== "/login" && shouldLogin && restrictedPaths.find(r => r.test(location.pathname)) !== undefined && <Redirect to={"/login"} />}
+            {shouldLogin && restrictedPaths.find(r => r.test(location.pathname)) !== undefined && <Route component={LoginPage}/>}
             <Route path={"/login"} component={LoginPage}/>
             <Route path={"/"} exact component={Profile}/>
             <Route path={"/categories"} component={Categories}/>

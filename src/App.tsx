@@ -18,6 +18,7 @@ import Category from "./pages/Category";
 import Quiz from "./pages/Quiz";
 import QuizRequest from "./pages/QuizRequest";
 import QuizRequestResult from "./pages/QuizRequestResult";
+import Requests from "./pages/Requests";
 
 const StyledApp = styled.div`
   display: grid;
@@ -51,6 +52,7 @@ function App({shouldLogin} : any) {
             <Route path={"/quiz/:id"} component={Quiz}/>
             <Route path={"/r/:id"} component={QuizRequest}/>
             <Route path={"/result/:id"} component={QuizRequestResult}/>
+            <Route path={"/requests"} component={Requests}/>
           </Switch>
         </Main>
         <Tops/>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import {gql, useQuery} from "@apollo/client";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ import moment from "moment";
 const GET_REQUESTS = gql`
     query GetRequests {
         myRequests{
-
+            _id
             quiz{
                 _id
                 name
@@ -39,6 +39,8 @@ const StyledRequests = styled.div`
     margin: 0;
     padding: 0;
     ul{
+      height: 0;
+      overflow: hidden;
       li{
         ::marker{
           content: '-';
@@ -64,6 +66,10 @@ const StyledRequests = styled.div`
       border-radius: 10px;
     }
   }
+  
+  ul li.active ul{
+    height: auto;
+  }
 `
 
 const StyledRequestHeader = styled.div`
@@ -80,22 +86,42 @@ const StyledRequestHeader = styled.div`
     }
   }
 `
+const ListExpandButton = styled.div`
+  text-align: center;
+  padding: 10px;
+  color: #ffffff;
+  border-radius: 10px;
+  &:hover{
+    background: #076d60;
+    cursor:pointer;
+  }
+`
 
 function Requests() {
 
-  let {loading, error, data} = useQuery(GET_REQUESTS)
+  let {loading, error, data} = useQuery(GET_REQUESTS);
+  let [expanded, setExpanded] = useState<string[]>([]);
   if (loading) {
     return <div>Loading...</div>
   }
   if (error) {
     return <div>Error :( </div>
   }
-  console.log(data);
+
+
+  let toggleExpand = (id: string) => {
+    if(expanded.indexOf(id) < 0){
+      setExpanded([...expanded, id]);
+    }else{
+      setExpanded(expanded.filter(n => n !== id));
+    }
+  }
+
   return (
     <StyledRequests>
       <ul>
         {data.myRequests.map((request: any) => (
-          <li key={request._id}>
+          <li key={request._id} className={expanded.indexOf(request._id) < 0 ? "" : "active"}>
             <StyledRequestHeader>
               <h2>{request.quiz.name}</h2>
               <Twemoji>
@@ -112,6 +138,10 @@ function Requests() {
                 </li>
               ))}
             </ul>
+            <ListExpandButton onClick={() => toggleExpand(request._id)}>
+              <span>{expanded.indexOf(request._id) < 0 ? "v" : "^"}</span>
+            </ListExpandButton>
+
           </li>
         ))}
       </ul>
